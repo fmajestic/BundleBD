@@ -12,7 +12,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import replace, { RollupReplaceOptions } from "@rollup/plugin-replace";
 import svgr from "@svgr/rollup";
 import esbuild from "rollup-plugin-esbuild";
-import styles from "rollup-plugin-styles";
+import styles, { Options as StylesOptions } from "rollup-plugin-styles";
 import styleLoader from "../plugins/styleloader";
 import text from "../plugins/text";
 import moduleComments from "../plugins/modulecomments";
@@ -73,13 +73,8 @@ export default function getRollupConfig(options: BundleBDOptions, pluginConfig: 
 
 	const outputPath = path.join(outputDir, meta.name.replace(/\s/g, "") + ".plugin.js");
 
-	// To stop ts from complaining
-	type StylesMode = ["inject", (varname: string, id: string) => string];
-	const stylesOptions = {
-		mode: [
-			"inject",
-			(varname: string, id: string) => `_loadStyle("${path.basename(id)}", ${varname});`
-		] as StylesMode,
+	const stylesOptions: StylesOptions = {
+		mode: ["inject", (varname, id) => `_loadStyle("${path.basename(id)}", ${varname});`],
 		plugins: options.postcssPlugins
 	};
 
