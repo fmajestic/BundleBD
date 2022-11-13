@@ -3,7 +3,7 @@ import path from "path";
 import { RollupOptions } from "rollup";
 import { Meta } from "bdapi";
 import { checkDirExists, ensureDirExists, ensureFileExists, stringify } from "../utils";
-import { BundleBDOptions } from "..";
+import { BundleBDOptions } from "../../lib/config";
 import { PluginConfiguration } from "./plugin";
 
 import image from "@rollup/plugin-image";

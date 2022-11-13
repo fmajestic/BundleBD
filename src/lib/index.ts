@@ -4,3 +4,4 @@
 export * from "./settings";
 export * from "./strings";
 export * from "./webpackutils";
+export { Config } from "./config";

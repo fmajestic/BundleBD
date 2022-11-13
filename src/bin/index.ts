@@ -2,8 +2,8 @@ import path from "path";
 import fs from "fs";
 import { homedir } from "os";
 import { rollup, watch as rollupWatch, OutputOptions, RollupBuild } from "rollup";
-import { Options } from "rollup-plugin-styles";
-import packageInfo from "../../package.json";
+import { version as packageVersion } from "../../package.json";
+import { BundleBDOptions } from "../lib/config";
 import getPluginConfig from "./config/plugin";
 import getRollupConfig from "./config/rollup";
 import Logger from "./logger";
@@ -11,15 +11,6 @@ import { checkDirExists } from "./utils";
 import installScript from "./templates/installscript";
 import meta from "./templates/meta";
 import zlibrary from "./templates/zlibrary";
-
-export interface BundleBDOptions {
-	input: string;
-	output: string;
-	dev: boolean;
-	bdPath?: string;
-	plugin?: string;
-	postcssPlugins?: Options["plugins"];
-}
 
 const universalOptionKeys = ["input", "output", "bdPath"];
 const configOptionKeys = [...universalOptionKeys, "postcssPlugins"];
@@ -41,7 +32,7 @@ switch (process.platform) {
 const argv = process.argv.slice(2);
 
 if (argv[0] === "--version") {
-	console.log(`v${packageInfo.version}`);
+	console.log(`v${packageVersion}`);
 	process.exit(0);
 }
 
@@ -66,9 +57,30 @@ const argOptions = argv.reduce<any>((obj, curr, i) => {
 	return obj;
 }, {});
 
+function loadTsNode() {
+	try {
+		require("ts-node/register");
+	} catch (err) {
+		Logger.error("ts-node is required to use a typescript config file", false);
+		Logger.error("Install it with: npm i -D ts-node");
+	}
+}
+
+const configTypes = [{ ext: ".js" }, { ext: ".ts", preload: loadTsNode }];
+
 const configOptions = (() => {
-	const configPath = path.join(process.cwd(), "bundlebd.config.js");
-	if (!fs.existsSync(configPath)) return {};
+	let configPath: string | undefined = undefined;
+
+	for (const type of configTypes) {
+		const file = path.join(process.cwd(), "bundlebd.config" + type.ext);
+		if (fs.existsSync(file)) {
+			configPath = file;
+			type.preload && type.preload();
+			break;
+		}
+	}
+
+	if (!configPath) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	let config = require(configPath);

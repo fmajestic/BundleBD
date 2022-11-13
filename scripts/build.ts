@@ -55,7 +55,7 @@ const builds: { name: string; options: Require<BuildOptions, "outfile"> }[] = [
 			entryPoints: ["src/bin/index.ts"],
 			outfile: "bin.js",
 			bundle: true,
-			external: [...Object.keys(dependencies)],
+			external: [...Object.keys(dependencies), "ts-node"],
 			platform: "node",
 			banner: { js: "#!/usr/bin/env node\n" }
 		}
