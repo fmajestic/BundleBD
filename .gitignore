@@ -1,6 +1,7 @@
 bin.js
 index.js
 types
+!types/global
 
 # Logs
 logs

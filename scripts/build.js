@@ -32,13 +32,6 @@ const declarationPlugin = {
 		build.onEnd((result) => {
 			if (result.errors.length > 0) return;
 			execSync("tsc");
-
-			if (!fs.existsSync("types/global")) fs.mkdirSync("types/global");
-			fs.readdirSync("src/lib/global").forEach((file) => {
-				fs.copyFileSync(`src/lib/global/${file}`, `types/global/${file}`);
-			});
-			const content = fs.readFileSync("types/index.d.ts", "utf8");
-			fs.writeFileSync("types/index.d.ts", content.replace("../src/lib/global/", "global/"));
 		});
 	}
 };
