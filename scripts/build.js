@@ -31,7 +31,7 @@ const declarationPlugin = {
 	setup(build) {
 		build.onEnd((result) => {
 			if (result.errors.length > 0) return;
-			execSync("tsc");
+			execSync("tsc", { stdio: "inherit" });
 		});
 	}
 };
@@ -82,9 +82,12 @@ if (process.argv.slice(2)[0] === "watch") {
 		const { name, options } = currBuild;
 		options.watch = {
 			onRebuild(error) {
-				if (error) return;
-				format(options.outfile);
-				console.log(`Built ${name}`);
+				if (error) {
+					console.log(`Failed to build ${name}`);
+				} else {
+					format(options.outfile);
+					console.log(`Built ${name}`);
+				}
 			}
 		};
 	}
@@ -92,8 +95,10 @@ if (process.argv.slice(2)[0] === "watch") {
 
 for (const currBuild of builds) {
 	const { name, options } = currBuild;
-	build(options).then(() => {
-		format(options.outfile);
-		console.log(`Built ${name}`);
-	});
+	build(options)
+		.then(() => {
+			format(options.outfile);
+			console.log(`Built ${name}`);
+		})
+		.catch(() => console.log(`Failed to build ${name}`));
 }
