@@ -7,5 +7,10 @@
 		"emitDeclarationOnly": true,
 		"outDir": "types"
 	},
+	"ts-node": {
+		"compilerOptions": {
+			"resolveJsonModule": true
+		}
+	},
 	"files": ["src/lib/index.ts"]
 }
