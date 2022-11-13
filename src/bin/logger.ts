@@ -11,6 +11,8 @@ export default class Logger {
 		this._log("WARN", message, 33);
 	}
 
+	static error(message: string, fatal: false): void;
+	static error(message: string, fatal?: true): never;
 	static error(message: string, fatal = true) {
 		this._log("ERROR", message, 31);
 		if (fatal) {
